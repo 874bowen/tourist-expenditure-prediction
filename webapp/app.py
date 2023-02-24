@@ -1,7 +1,8 @@
 import flask
 import pandas as pd
 import pickle
-from flask_sqlalchemy import SQLAlchemy
+
+from flask_cors import CORS
 from flask_migrate import Migrate
 from sqlalchemy.orm import backref
 
@@ -18,7 +19,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy(app)
-
+CORS(app)
 
 class CountiesModel(db.Model):
     __tablename__ = 'counties_table'
@@ -54,9 +55,12 @@ def main():
         return (flask.render_template('main.html'))
     if flask.request.method == 'POST':
         temperature = flask.request.form['temperature']
-        rainfall = flask.request.form['rainfall']
+        rainfall = flask.request.form['humidity']
         month = flask.request.form['month-today']
-
+        place = flask.request.form['select_place']
+        print(place.title())
+        data = CountiesModel.query.filter_by(county_name='Narok').first()
+        print(data)
         months = [0] * 11
 
         if month == 1:
