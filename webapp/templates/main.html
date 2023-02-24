@@ -16,19 +16,47 @@ form {
 </head>
 <form action="{{ url_for('main') }}" method="POST">
     <fieldset>
+
         <legend>Input values:</legend>
         Date:
         <input name="month-today" id="month-today" type="number" value="">
         <br>
-        <script>
-            document.getElementById("month-today").value = new Date().getMonth()
-        </script>
+
+        <select name="select_place" id="select_place">
+          <option value="Mombasa">Mombasa</option>
+          <option value="Narok">Narok</option>
+          <option value="Kajiado">Kajiado</option>
+          <option value="Nairobi">Nairobi</option>
+        </select>
         Temperature:
-        <input name="temperature" type="number" required>
+        <input name="temperature" type="number" id="temperature"  step="0.01" required>
         <br>
-        <br> Rainfall:
-        <input name="rainfall" type="number" required>
+        <br> Humidity:
+        <input name="humidity" type="number" id="humidity"  step="0.01" required>
         <br>
+        <script>
+            document.getElementById("month-today").value = new Date().getMonth();
+            const humidity = document.getElementById(('humidity'))
+            const temperature = document.getElementById('temperature');
+            const selectPlace = document.getElementById('select_place');
+
+            selectPlace.addEventListener('change', () => {
+                var place=document.getElementById('select_place').value;
+                checkWeather(place)
+            })
+            let currWeather;
+            const checkWeather = async (place, callback) => {
+                let weatherData  = await fetch(`https://api.weatherapi.com/v1/current.json?key=be14007191cf4192b20110252231002&q=${place}&aqi=no`)
+                let weatherDataJson = await weatherData.json();
+                currWeather = weatherDataJson;
+                humidity.value = weatherDataJson.current.humidity;
+                temperature.value = weatherDataJson.current.feelslike_c;
+                console.log(weatherDataJson.current)
+                return weatherDataJson;
+            }
+            console.log(currWeather)
+
+        </script>
         <br>
         <input type="submit">
     </fieldset>
